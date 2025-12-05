@@ -395,21 +395,11 @@ async function renderWeaponSectionWithImage(label, weapon) {
     `;
   }
 
-  // Fetch weapon image from metadata
-  let imageUrl = weapon.imageUrl;
-  if (!imageUrl && weapon.name) {
-    try {
-      const response = await fetch(
-        `${API_BASE}/metadata/weapons/${weapon.name}`
-      );
-      if (response.ok) {
-        const metadata = await response.json();
-        imageUrl = metadata.imageUrl;
-      }
-    } catch (error) {
-      console.log(`Could not fetch image for weapon: ${weapon.name}`);
-    }
-  }
+  // Use the imageUrl from the backend data (already full URLs)
+  let imageUrl = weapon.imageUrl || weapon.image;
+
+  // No need to modify - imageUrl is already a full URL from Supabase
+  // Example: https://kheqgrovncnngxfwpufg.supabase.co/storage/v1/object/public/cod/weapons/AAROW_109.png
 
   const attachments = weapon.attachments || weapon.attachmentSlots || {};
   const attachmentList = Object.entries(attachments)
