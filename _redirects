@@ -1,3 +1,4 @@
 # Proxy API requests to backend server
 /api/*  http://16.171.4.184:8080/api/:splat  200
+/metadata/*  http://16.171.4.184:8080/metadata/:splat  200
 /  http://16.171.4.184:8080/  200

@@ -6,12 +6,18 @@ let refreshInterval = null;
 // DOM elements
 const loadingState = document.getElementById("loadingState");
 const errorState = document.getElementById("errorState");
-const loadoutsGrid = document.getElementById("loadoutsGrid");
+const loadoutsContainer = document.getElementById("loadoutsContainer");
+const loadoutTabs = document.getElementById("loadoutTabs");
+const loadoutContent = document.getElementById("loadoutContent");
 const statusIndicator = document.getElementById("statusIndicator");
 const statusDot = statusIndicator.querySelector(".status-dot");
 const statusText = statusIndicator.querySelector(".status-text");
 const errorMessage = document.getElementById("errorMessage");
 const retryBtn = document.getElementById("retryBtn");
+
+// State
+let currentLoadouts = [];
+let activeLoadoutIndex = 0;
 
 // Initialize Twitch Extension
 function initializeTwitchExtension() {
@@ -68,7 +74,7 @@ function showError(message) {
   errorMessage.textContent = message;
   loadingState.style.display = "none";
   errorState.style.display = "flex";
-  loadoutsGrid.style.display = "none";
+  loadoutsContainer.style.display = "none";
   updateStatus("error", "Error");
 }
 
@@ -76,7 +82,7 @@ function showError(message) {
 function showLoadouts() {
   loadingState.style.display = "none";
   errorState.style.display = "none";
-  loadoutsGrid.style.display = "grid";
+  loadoutsContainer.style.display = "block";
   updateStatus("connected", "Connected");
 }
 
@@ -150,7 +156,8 @@ async function loadLoadouts() {
       return;
     }
 
-    renderLoadouts(loadouts.slice(0, 5)); // Show up to 5 loadouts
+    currentLoadouts = loadouts.slice(0, 5); // Store up to 5 loadouts
+    renderTabbedLoadouts(currentLoadouts);
     showLoadouts();
   } catch (error) {
     console.error("Error loading loadouts:", error);
@@ -291,6 +298,183 @@ retryBtn.addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
   initializeTwitchExtension();
 });
+
+// Render tabbed loadouts interface
+function renderTabbedLoadouts(loadouts) {
+  if (!loadouts || loadouts.length === 0) {
+    showNoLoadouts();
+    return;
+  }
+
+  // Render tabs
+  loadoutTabs.innerHTML = "";
+  loadouts.forEach((loadout, index) => {
+    const tab = document.createElement("div");
+    tab.className = `loadout-tab ${
+      index === activeLoadoutIndex ? "active" : ""
+    }`;
+    tab.textContent = loadout.name || `Loadout ${index + 1}`;
+    tab.addEventListener("click", () => switchToLoadout(index));
+    loadoutTabs.appendChild(tab);
+  });
+
+  // Render active loadout content
+  renderActiveLoadout();
+}
+
+// Switch to a specific loadout tab
+function switchToLoadout(index) {
+  if (index < 0 || index >= currentLoadouts.length) return;
+
+  activeLoadoutIndex = index;
+
+  // Update tab states
+  const tabs = loadoutTabs.querySelectorAll(".loadout-tab");
+  tabs.forEach((tab, i) => {
+    tab.classList.toggle("active", i === index);
+  });
+
+  // Render new content
+  renderActiveLoadout();
+}
+
+// Render the currently active loadout
+async function renderActiveLoadout() {
+  if (!currentLoadouts[activeLoadoutIndex]) return;
+
+  const loadout = currentLoadouts[activeLoadoutIndex];
+
+  loadoutContent.innerHTML = `
+    <div class="loadout-header">
+      <div class="loadout-name">${escapeHtml(
+        loadout.name || `Loadout ${activeLoadoutIndex + 1}`
+      )}</div>
+    </div>
+    
+    ${await renderWeaponSectionWithImage("Primary", loadout.primary)}
+    ${await renderWeaponSectionWithImage("Secondary", loadout.secondary)}
+    
+    <div class="equipment-section">
+      <div class="equipment-item">
+        <div class="equipment-label">Tactical</div>
+        <div class="equipment-name">${escapeHtml(
+          getEquipmentName(loadout.tactical)
+        )}</div>
+      </div>
+      <div class="equipment-item">
+        <div class="equipment-label">Lethal</div>
+        <div class="equipment-name">${escapeHtml(
+          getEquipmentName(loadout.lethal)
+        )}</div>
+      </div>
+      <div class="equipment-item">
+        <div class="equipment-label">Field Upgrade</div>
+        <div class="equipment-name">${escapeHtml(
+          getEquipmentName(loadout.fieldUpgrade)
+        )}</div>
+      </div>
+    </div>
+    
+    <div class="perks-section">
+      <div class="perks-header">Perks</div>
+      <div class="perks-list">
+        ${formatPerks(loadout.perks)}
+      </div>
+    </div>
+  `;
+}
+
+// Render weapon section with image fetching
+async function renderWeaponSectionWithImage(label, weapon) {
+  if (!weapon || !weapon.name) {
+    return `
+      <div class="weapon-section">
+        <div class="weapon-header">${label}</div>
+        <div class="weapon-name">None</div>
+      </div>
+    `;
+  }
+
+  // Fetch weapon image from metadata
+  let imageUrl = weapon.imageUrl;
+  if (!imageUrl && weapon.name) {
+    try {
+      const response = await fetch(
+        `${API_BASE}/metadata/weapons/${weapon.name}`
+      );
+      if (response.ok) {
+        const metadata = await response.json();
+        imageUrl = metadata.imageUrl;
+      }
+    } catch (error) {
+      console.log(`Could not fetch image for weapon: ${weapon.name}`);
+    }
+  }
+
+  const attachments = weapon.attachmentSlots || {};
+  const attachmentList = Object.entries(attachments)
+    .filter(([key, value]) => value && value !== "None")
+    .map(
+      ([key, value]) => `
+      <div class="attachment-item">
+        <span class="attachment-slot">${escapeHtml(key)}:</span>
+        <span class="attachment">${escapeHtml(value)}</span>
+      </div>
+    `
+    )
+    .join("");
+
+  return `
+    <div class="weapon-section">
+      <div class="weapon-header">${label}</div>
+      <div class="weapon-info">
+        ${
+          imageUrl
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(
+                weapon.name
+              )}" class="weapon-image" onerror="this.style.display='none'">`
+            : ""
+        }
+        <div class="weapon-details">
+          <div class="weapon-name">${escapeHtml(weapon.name)}</div>
+          <div class="weapon-category">${escapeHtml(
+            weapon.category || "Unknown"
+          )}</div>
+        </div>
+      </div>
+      ${
+        attachmentList
+          ? `<div class="attachments-list">${attachmentList}</div>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+// Helper function to extract name from equipment object or string
+function getEquipmentName(equipment) {
+  if (!equipment) return "None";
+  if (typeof equipment === "string") return equipment;
+  if (typeof equipment === "object" && equipment.name) return equipment.name;
+  return "None";
+}
+
+// Helper function to format perks array
+function formatPerks(perks) {
+  if (!perks || !Array.isArray(perks)) return "";
+
+  return perks
+    .map((perk) => {
+      let perkName = "Unknown Perk";
+      if (typeof perk === "string") {
+        perkName = perk;
+      } else if (typeof perk === "object" && perk.name) {
+        perkName = perk.name;
+      }
+      return `<span class="perk">${escapeHtml(perkName)}</span>`;
+    })
+    .join("");
+}
 
 // Cleanup on page unload
 window.addEventListener("beforeunload", () => {
