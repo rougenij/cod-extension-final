@@ -97,7 +97,7 @@ async function fetchLoadouts(channelId, token) {
 
   // Try primary endpoint first
   try {
-    const response = await fetch(`${API_BASE}/streamer/${channelId}/loadouts`, {
+    const response = await fetch(`${API_BASE}/api/loadouts/${channelId}`, {
       method: "GET",
       headers: headers,
     });
@@ -111,7 +111,7 @@ async function fetchLoadouts(channelId, token) {
 
   // Fallback: try getting streamer data and extract loadouts
   try {
-    const response = await fetch(`${API_BASE}/streamer/${channelId}`, {
+    const response = await fetch(`${API_BASE}/api/loadouts/${channelId}`, {
       method: "GET",
       headers: headers,
     });
@@ -121,26 +121,11 @@ async function fetchLoadouts(channelId, token) {
       return streamerData.loadouts || [];
     }
   } catch (error) {
-    console.log("Fallback endpoint failed, trying streamers list...");
+    console.log("Fallback endpoint failed");
   }
 
-  // Last resort: try getting all streamers and find this one
-  try {
-    const response = await fetch(`${API_BASE}/streamers`, {
-      method: "GET",
-      headers: headers,
-    });
-
-    if (response.ok) {
-      const streamers = await response.json();
-      const streamer = streamers.find(
-        (s) => s.id === channelId || s.channelId === channelId
-      );
-      return streamer ? streamer.loadouts || [] : [];
-    }
-  } catch (error) {
-    console.log("All endpoints failed");
-  }
+  // No more fallbacks - streamers endpoint doesn't exist
+  console.log("Primary and fallback endpoints failed");
 
   // If all endpoints fail, return test data for demonstration
   console.log("All endpoints failed, using test data...");

@@ -132,7 +132,7 @@ async function getLoadoutCount() {
       headers["Authorization"] = `Bearer ${authToken}`;
     }
 
-    const response = await fetch(`${API_BASE}/streamer/${channelId}/loadouts`, {
+    const response = await fetch(`${API_BASE}/api/loadouts/${channelId}`, {
       method: "GET",
       headers: headers,
     });
