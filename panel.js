@@ -32,11 +32,7 @@ function initializeTwitchExtension() {
       // Start loading loadouts
       loadLoadouts();
 
-      // Set up auto-refresh
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-      refreshInterval = setInterval(loadLoadouts, 30000);
+      // Auto-refresh disabled
     });
 
     window.Twitch.ext.onContext((context) => {
@@ -66,7 +62,7 @@ function updateStatus(status, text) {
 function showLoading() {
   loadingState.style.display = "flex";
   errorState.style.display = "none";
-  loadoutsGrid.style.display = "none";
+  loadoutsContainer.style.display = "none";
 }
 
 // Show error state
@@ -167,12 +163,13 @@ async function loadLoadouts() {
 
 // Show no loadouts message
 function showNoLoadouts() {
-  loadoutsGrid.innerHTML = `
-        <div class="no-loadouts">
-            <div class="no-loadouts-icon">🎮</div>
-            <p>No loadouts available for this streamer</p>
-        </div>
-    `;
+  loadoutTabs.innerHTML = "";
+  loadoutContent.innerHTML = `
+    <div class="no-loadouts">
+      <div class="no-loadouts-icon">🎮</div>
+      <p>No loadouts available for this streamer</p>
+    </div>
+  `;
   showLoadouts();
 }
 
@@ -244,12 +241,15 @@ function renderWeaponSection(label, weapon) {
         `;
   }
 
-  const attachments = weapon.attachmentSlots || {};
+  const attachments = weapon.attachments || weapon.attachmentSlots || {};
   const attachmentList = Object.entries(attachments)
     .filter(([key, value]) => value && value !== "None")
-    .map(
-      ([key, value]) => `<span class="attachment">${escapeHtml(value)}</span>`
-    )
+    .map(([key, value]) => {
+      // Handle both string values and object values with name property
+      const attachmentName =
+        typeof value === "string" ? value : value?.name || "Unknown";
+      return `<span class="attachment">${escapeHtml(attachmentName)}</span>`;
+    })
     .join("");
 
   return `
@@ -411,17 +411,20 @@ async function renderWeaponSectionWithImage(label, weapon) {
     }
   }
 
-  const attachments = weapon.attachmentSlots || {};
+  const attachments = weapon.attachments || weapon.attachmentSlots || {};
   const attachmentList = Object.entries(attachments)
     .filter(([key, value]) => value && value !== "None")
-    .map(
-      ([key, value]) => `
-      <div class="attachment-item">
-        <span class="attachment-slot">${escapeHtml(key)}:</span>
-        <span class="attachment">${escapeHtml(value)}</span>
-      </div>
-    `
-    )
+    .map(([key, value]) => {
+      // Handle both string values and object values with name property
+      const attachmentName =
+        typeof value === "string" ? value : value?.name || "Unknown";
+      return `
+        <div class="attachment-item">
+          <span class="attachment-slot">${escapeHtml(key)}:</span>
+          <span class="attachment">${escapeHtml(attachmentName)}</span>
+        </div>
+      `;
+    })
     .join("");
 
   return `
