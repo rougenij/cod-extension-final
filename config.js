@@ -1,4 +1,4 @@
-const API_BASE = "http://16.171.4.184:8080";
+const API_BASE = "https://16.171.4.184:8080";
 let authToken = null;
 let channelId = null;
 let currentConfig = {
