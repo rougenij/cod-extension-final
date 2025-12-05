@@ -98,7 +98,12 @@ async function fetchLoadouts(channelId, token) {
     });
 
     if (response.ok) {
-      return await response.json();
+      const data = await response.json();
+      // Convert object to array if needed
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        return Object.values(data);
+      }
+      return data;
     }
   } catch (error) {
     console.log("Primary endpoint failed, trying fallback...");

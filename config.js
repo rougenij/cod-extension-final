@@ -139,7 +139,16 @@ async function getLoadoutCount() {
 
     if (response.ok) {
       const loadouts = await response.json();
-      loadoutCount.textContent = loadouts ? loadouts.length : 0;
+      // Convert object to array if needed for counting
+      let loadoutArray = loadouts;
+      if (
+        loadouts &&
+        typeof loadouts === "object" &&
+        !Array.isArray(loadouts)
+      ) {
+        loadoutArray = Object.values(loadouts);
+      }
+      loadoutCount.textContent = loadoutArray ? loadoutArray.length : 0;
     } else {
       loadoutCount.textContent = "2 (Test Data)";
     }
