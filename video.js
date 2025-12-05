@@ -85,7 +85,7 @@ function showContent() {
   loadoutContent.style.display = "block";
 }
 
-// Fetch loadouts from API
+// Fetch loadouts from API with fallback endpoints
 async function fetchLoadouts(channelId, token) {
   const headers = {
     "Content-Type": "application/json",
@@ -95,16 +95,54 @@ async function fetchLoadouts(channelId, token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}/streamer/${channelId}/loadouts`, {
-    method: "GET",
-    headers: headers,
-  });
+  // Try primary endpoint first
+  try {
+    const response = await fetch(`${API_BASE}/streamer/${channelId}/loadouts`, {
+      method: "GET",
+      headers: headers,
+    });
 
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.log("Primary endpoint failed, trying fallback...");
   }
 
-  return await response.json();
+  // Fallback: try getting streamer data and extract loadouts
+  try {
+    const response = await fetch(`${API_BASE}/streamer/${channelId}`, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (response.ok) {
+      const streamerData = await response.json();
+      return streamerData.loadouts || [];
+    }
+  } catch (error) {
+    console.log("Fallback endpoint failed, trying streamers list...");
+  }
+
+  // Last resort: try getting all streamers and find this one
+  try {
+    const response = await fetch(`${API_BASE}/streamers`, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (response.ok) {
+      const streamers = await response.json();
+      const streamer = streamers.find(
+        (s) => s.id === channelId || s.channelId === channelId
+      );
+      return streamer ? streamer.loadouts || [] : [];
+    }
+  } catch (error) {
+    console.log("All endpoints failed");
+  }
+
+  throw new Error(`No available endpoints for channel ${channelId}`);
 }
 
 // Load and display loadouts
