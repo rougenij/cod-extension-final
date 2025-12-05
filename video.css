@@ -1,0 +1,322 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Orbitron", "Courier New", monospace;
+  background: transparent;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.overlay-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.overlay-widget {
+  background: rgba(5, 7, 16, 0.95);
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.overlay-widget:hover {
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.5);
+  border-color: #00e5ff;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), transparent);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 12px 12px 0 0;
+}
+
+.loadout-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #00e5ff;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+.widget-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn,
+.toggle-btn {
+  background: rgba(0, 229, 255, 0.2);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover,
+.toggle-btn:hover {
+  background: rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loadout-counter {
+  font-size: 11px;
+  color: #cccccc;
+  min-width: 30px;
+  text-align: center;
+}
+
+.widget-content {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 200px;
+}
+
+.widget-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.loading-overlay,
+.error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 7, 16, 0.9);
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 229, 255, 0.3);
+  border-top: 2px solid #00e5ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-overlay {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-text {
+  font-size: 11px;
+  color: #ff6b6b;
+}
+
+.retry-btn-small {
+  background: rgba(0, 229, 255, 0.2);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.retry-btn-small:hover {
+  background: rgba(0, 229, 255, 0.3);
+}
+
+.loadout-content {
+  padding: 16px;
+}
+
+.primary-weapon {
+  margin-bottom: 12px;
+}
+
+.weapon-header {
+  font-size: 10px;
+  color: #00e5ff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.weapon-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.weapon-icon {
+  width: 28px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.weapon-details {
+  flex: 1;
+}
+
+.weapon-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.weapon-category {
+  font-size: 9px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.key-attachment {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.attachment-label {
+  font-size: 9px;
+  color: #888;
+}
+
+.attachment-value {
+  font-size: 10px;
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.secondary-info {
+  border-top: 1px solid rgba(0, 229, 255, 0.2);
+  padding-top: 8px;
+}
+
+.secondary-weapon {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.equipment-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.equipment-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  font-size: 9px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 10px;
+  color: #ffffff;
+}
+
+/* Compact mode for smaller screens */
+@media (max-width: 480px) {
+  .overlay-container {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .overlay-widget {
+    min-width: 240px;
+    max-width: 280px;
+  }
+
+  .widget-header {
+    padding: 10px 12px;
+  }
+
+  .loadout-content {
+    padding: 12px;
+  }
+}
+
+/* Animation for expand/collapse */
+.toggle-btn.collapsed {
+  transform: rotate(180deg);
+}
+
+/* Smooth transitions for all interactive elements */
+.nav-btn,
+.toggle-btn,
+.retry-btn-small {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glow effect on hover */
+.overlay-widget:hover .weapon-name {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Subtle pulse animation for loading */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.loading-overlay {
+  animation: pulse 2s infinite;
+}

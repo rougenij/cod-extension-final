@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COD Loadout Viewer - Configuration</title>
+    <link rel="stylesheet" href="config.css" />
+  </head>
+  <body>
+    <div class="config-container">
+      <header class="config-header">
+        <h1 class="config-title">COD Loadout Viewer Configuration</h1>
+        <div class="connection-status" id="connectionStatus">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText"
+            >Checking connection...</span
+          >
+        </div>
+      </header>
+
+      <div class="config-content">
+        <div class="loading-state" id="loadingState">
+          <div class="loading-spinner"></div>
+          <p>Loading configuration...</p>
+        </div>
+
+        <div class="error-state" id="errorState" style="display: none">
+          <div class="error-icon">⚠️</div>
+          <p class="error-message" id="errorMessage">
+            Failed to load configuration
+          </p>
+          <button class="retry-btn" id="retryBtn">Retry</button>
+        </div>
+
+        <div class="config-form" id="configForm" style="display: none">
+          <div class="config-section">
+            <h2 class="section-title">Overlay Settings</h2>
+
+            <div class="form-group">
+              <label class="form-label" for="overlayEnabled">
+                <span class="label-text">Enable Overlay</span>
+                <span class="label-description"
+                  >Show the loadout overlay on the video stream</span
+                >
+              </label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="overlayEnabled"
+                  class="toggle-input"
+                />
+                <label for="overlayEnabled" class="toggle-label">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="refreshInterval">
+                <span class="label-text">Refresh Interval</span>
+                <span class="label-description"
+                  >How often to update loadout data</span
+                >
+              </label>
+              <select id="refreshInterval" class="form-select">
+                <option value="15">15 seconds</option>
+                <option value="30" selected>30 seconds</option>
+                <option value="60">60 seconds</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h2 class="section-title">Channel Information</h2>
+
+            <div class="info-group">
+              <div class="info-item">
+                <span class="info-label">Channel ID:</span>
+                <span class="info-value" id="channelIdValue">-</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Backend Status:</span>
+                <span class="info-value" id="backendStatus">
+                  <span class="backend-dot" id="backendDot"></span>
+                  <span id="backendStatusText">Checking...</span>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Available Loadouts:</span>
+                <span class="info-value" id="loadoutCount">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <h2 class="section-title">API Configuration</h2>
+
+            <div class="api-info">
+              <div class="api-item">
+                <span class="api-label">Backend URL:</span>
+                <code class="api-value">http://16.171.4.184:8080</code>
+              </div>
+              <div class="api-item">
+                <span class="api-label">Panel URL:</span>
+                <code class="api-value"
+                  >https://twitch-extension.netlify.app/panel.html</code
+                >
+              </div>
+              <div class="api-item">
+                <span class="api-label">Overlay URL:</span>
+                <code class="api-value"
+                  >https://twitch-extension.netlify.app/video.html</code
+                >
+              </div>
+            </div>
+
+            <div class="api-note">
+              <strong>Note:</strong> Make sure to add
+              <code>http://16.171.4.184:8080</code> to the "Allowed URL Fetching
+              Domains" in your Twitch Developer Console under the extension's
+              settings.
+            </div>
+          </div>
+
+          <div class="config-actions">
+            <button class="save-btn" id="saveBtn">
+              <span class="btn-text">Save Configuration</span>
+              <span
+                class="btn-spinner"
+                id="saveSpinner"
+                style="display: none"
+              ></span>
+            </button>
+            <button class="test-btn" id="testBtn">Test Connection</button>
+          </div>
+
+          <div class="save-status" id="saveStatus" style="display: none">
+            <span class="save-message" id="saveMessage"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="config.js"></script>
+  </body>
+</html>

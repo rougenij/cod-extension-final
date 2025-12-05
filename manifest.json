@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "version": "1.0.0",
+  "name": "COD Loadout Viewer",
+  "description": "View Call of Duty loadouts for streamers in real-time",
+  "author_name": "COD Extension Team",
+  "developer_rig_configuration": {
+    "views": {
+      "panel": {
+        "viewer_url": "https://twitch-extension.netlify.app/panel.html"
+      },
+      "component": {
+        "viewer_url": "https://twitch-extension.netlify.app/video.html"
+      },
+      "config": {
+        "viewer_url": "https://twitch-extension.netlify.app/config.html"
+      }
+    }
+  },
+  "views": {
+    "panel": {
+      "viewer_url": "https://twitch-extension.netlify.app/panel.html",
+      "height": 400,
+      "can_link_external_content": false
+    },
+    "component": {
+      "viewer_url": "https://twitch-extension.netlify.app/video.html",
+      "height": 300,
+      "can_link_external_content": false,
+      "zoom": true,
+      "zoom_pixels": 1024
+    },
+    "config": {
+      "viewer_url": "https://twitch-extension.netlify.app/config.html",
+      "can_link_external_content": false
+    }
+  },
+  "required_broadcaster_abilities": [],
+  "request_identity_link": false,
+  "bits_enabled": false,
+  "support_email": "support@codextension.com",
+  "icon_urls": {
+    "24x24": "https://twitch-extension.netlify.app/icon-24.png",
+    "100x100": "https://twitch-extension.netlify.app/icon-100.png"
+  },
+  "screenshots": [],
+  "allowlisted_config_urls": ["https://twitch-extension.netlify.app/"],
+  "allowlisted_panel_urls": ["https://twitch-extension.netlify.app/"]
+}
