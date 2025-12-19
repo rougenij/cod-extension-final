@@ -383,18 +383,46 @@ async function renderWeaponSectionWithImage(label, weapon) {
   }
 
   const attachments = weapon.attachments || weapon.attachmentSlots || {};
+
+  // Map numeric indices to slot names if needed
+  const slotNames = [
+    "muzzle",
+    "barrel",
+    "optic",
+    "underbarrel",
+    "magazine",
+    "stock",
+    "laser",
+    "rear_grip",
+    "ammunition",
+  ];
+
   const attachmentList = Object.entries(attachments)
     .filter(([key, value]) => value && value !== "None")
     .map(([key, value]) => {
       const attachmentName =
         typeof value === "string" ? value : value?.name || "Unknown";
+
+      // Skip if the attachment name is just a slot type (bad data)
+      if (slotNames.includes(attachmentName.toLowerCase())) {
+        return "";
+      }
+
+      // Convert numeric key to slot name, or use the key if it's already a name
+      let slotName = key;
+      const numKey = parseInt(key);
+      if (!isNaN(numKey) && numKey >= 0 && numKey < slotNames.length) {
+        slotName = slotNames[numKey];
+      }
+
       return `
         <div class="attachment-item">
-          <span class="attachment-slot">${escapeHtml(key)}:</span>
+          <span class="attachment-slot">${escapeHtml(slotName)}:</span>
           <span class="attachment">${escapeHtml(attachmentName)}</span>
         </div>
       `;
     })
+    .filter((item) => item !== "")
     .join("");
 
   return `
