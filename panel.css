@@ -158,9 +158,15 @@ body {
 .loadout-tabs {
   display: flex;
   gap: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   overflow-x: auto;
   padding-bottom: 4px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.loadout-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .loadout-tab {
@@ -388,43 +394,46 @@ body {
 }
 
 .equipment-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
   margin-bottom: 12px;
-}
-
-@media (max-width: 320px) {
-  .equipment-section {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
+  padding: 10px;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 8px;
 }
 
 .equipment-item {
+  flex: 1;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 6px 4px;
 }
 
 .equipment-label {
-  font-size: 9px;
-  color: #888;
+  font-size: 8px;
+  color: #00e5ff;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
 }
 
 .equipment-image {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   margin-bottom: 4px;
 }
 
 .equipment-name {
-  font-size: 11px;
+  font-size: 10px;
   color: #ffffff;
+  font-weight: 600;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .perks-section {
