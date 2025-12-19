@@ -157,31 +157,26 @@ body {
 
 .loadout-tabs {
   display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
-}
-
-.loadout-tabs::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  gap: 2px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .loadout-tab {
+  flex: 1;
   background: rgba(15, 25, 40, 0.6);
   border: 1px solid rgba(0, 229, 255, 0.3);
   color: #cccccc;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 6px 4px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
-  white-space: nowrap;
-  min-width: 80px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .loadout-tab:hover {
