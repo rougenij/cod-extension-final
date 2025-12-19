@@ -308,7 +308,9 @@ function renderTabbedLoadouts(loadouts) {
     tab.className = `loadout-tab ${
       index === activeLoadoutIndex ? "active" : ""
     }`;
-    tab.textContent = loadout.name || `Loadout ${index + 1}`;
+    // Use short label for tabs to fit all 5
+    tab.textContent = `#${index + 1}`;
+    tab.title = loadout.name || `Loadout ${index + 1}`; // Full name on hover
     tab.addEventListener("click", () => switchToLoadout(index));
     loadoutTabs.appendChild(tab);
   });
