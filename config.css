@@ -6,11 +6,19 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: "Orbitron", "Courier New", monospace;
   background: linear-gradient(135deg, #050710 0%, #0a0f1c 100%);
   color: #ffffff;
-  min-height: 100vh;
+  min-height: 100%;
   line-height: 1.6;
 }
 
