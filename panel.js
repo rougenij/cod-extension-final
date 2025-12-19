@@ -384,7 +384,7 @@ async function renderActiveLoadout() {
   `;
 }
 
-// Render weapon section with image fetching
+// Render weapon section with image fetching - new layout: name, image, attachments
 async function renderWeaponSectionWithImage(label, weapon) {
   if (!weapon || !weapon.name) {
     return `
@@ -395,17 +395,13 @@ async function renderWeaponSectionWithImage(label, weapon) {
     `;
   }
 
-  // Use the imageUrl from the backend data (already full URLs)
+  // Use the imageUrl from the backend data (already full URLs from Supabase)
   let imageUrl = weapon.imageUrl || weapon.image;
-
-  // No need to modify - imageUrl is already a full URL from Supabase
-  // Example: https://kheqgrovncnngxfwpufg.supabase.co/storage/v1/object/public/cod/weapons/AAROW_109.png
 
   const attachments = weapon.attachments || weapon.attachmentSlots || {};
   const attachmentList = Object.entries(attachments)
     .filter(([key, value]) => value && value !== "None")
     .map(([key, value]) => {
-      // Handle both string values and object values with name property
       const attachmentName =
         typeof value === "string" ? value : value?.name || "Unknown";
       return `
@@ -420,21 +416,19 @@ async function renderWeaponSectionWithImage(label, weapon) {
   return `
     <div class="weapon-section">
       <div class="weapon-header">${label}</div>
-      <div class="weapon-info">
-        ${
-          imageUrl
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(
-                weapon.name
-              )}" class="weapon-image" onerror="this.style.display='none'">`
-            : ""
-        }
-        <div class="weapon-details">
-          <div class="weapon-name">${escapeHtml(weapon.name)}</div>
-          <div class="weapon-category">${escapeHtml(
-            weapon.category || "Unknown"
-          )}</div>
-        </div>
-      </div>
+      <div class="weapon-name-large">${escapeHtml(weapon.name)}</div>
+      <div class="weapon-category">${escapeHtml(
+        weapon.category || "Unknown"
+      )}</div>
+      ${
+        imageUrl
+          ? `<div class="weapon-image-container">
+              <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(
+              weapon.name
+            )}" class="weapon-image-large" onerror="this.parentElement.style.display='none'">
+            </div>`
+          : ""
+      }
       ${
         attachmentList
           ? `<div class="attachments-list">${attachmentList}</div>`

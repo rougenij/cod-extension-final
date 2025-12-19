@@ -1,0 +1,13 @@
+{
+  "name": "cod-loadout-twitch-extension",
+  "version": "1.0.0",
+  "description": "COD Loadout Viewer Twitch Extension",
+  "scripts": {
+    "build": "node build.js",
+    "zip": "node build.js && cd dist && tar -a -c -f ../extension.zip *"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "terser": "^5.27.0"
+  }
+}
