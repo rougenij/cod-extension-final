@@ -396,7 +396,11 @@ async function renderWeaponSectionWithImage(label, weapon) {
   }
 
   // Use the imageUrl from the backend data (already full URLs from Supabase)
+  // Only use imageUrl if it's a valid full URL (not a relative path like "default.png")
   let imageUrl = weapon.imageUrl || weapon.image;
+  if (imageUrl && !imageUrl.startsWith("http")) {
+    imageUrl = null; // Ignore invalid/relative paths
+  }
 
   const attachments = weapon.attachments || weapon.attachmentSlots || {};
   const attachmentList = Object.entries(attachments)
