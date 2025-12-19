@@ -26,7 +26,6 @@ function initializeTwitchExtension() {
       authToken = auth.token;
       channelId = auth.channelId;
 
-      console.log("Twitch Extension Authorized:", { channelId });
       updateStatus("connected", "Connected");
 
       // Start loading loadouts
@@ -35,18 +34,14 @@ function initializeTwitchExtension() {
       // Auto-refresh disabled
     });
 
-    window.Twitch.ext.onContext((context) => {
-      console.log("Twitch Context:", context);
-    });
+    window.Twitch.ext.onContext((context) => {});
 
     window.Twitch.ext.onVisibilityChanged((isVisible) => {
-      console.log("Visibility changed:", isVisible);
       if (isVisible && channelId) {
         loadLoadouts();
       }
     });
   } else {
-    console.error("Twitch Extension Helper not available");
     updateStatus("error", "Twitch Helper Error");
     showError("Twitch Extension Helper not loaded");
   }
@@ -355,30 +350,15 @@ async function renderActiveLoadout() {
     ${await renderWeaponSectionWithImage("Secondary", loadout.secondary)}
     
     <div class="equipment-section">
-      <div class="equipment-item">
-        <div class="equipment-label">Tactical</div>
-        <div class="equipment-name">${escapeHtml(
-          getEquipmentName(loadout.tactical)
-        )}</div>
-      </div>
-      <div class="equipment-item">
-        <div class="equipment-label">Lethal</div>
-        <div class="equipment-name">${escapeHtml(
-          getEquipmentName(loadout.lethal)
-        )}</div>
-      </div>
-      <div class="equipment-item">
-        <div class="equipment-label">Field Upgrade</div>
-        <div class="equipment-name">${escapeHtml(
-          getEquipmentName(loadout.fieldUpgrade)
-        )}</div>
-      </div>
+      ${renderEquipmentItem("Tactical", loadout.tactical)}
+      ${renderEquipmentItem("Lethal", loadout.lethal)}
+      ${renderEquipmentItem("Field Upgrade", loadout.fieldUpgrade)}
     </div>
     
     <div class="perks-section">
       <div class="perks-header">Perks</div>
       <div class="perks-list">
-        ${formatPerks(loadout.perks)}
+        ${renderPerksWithImages(loadout.perks)}
       </div>
     </div>
   `;
@@ -398,7 +378,6 @@ async function renderWeaponSectionWithImage(label, weapon) {
   // Use the imageUrl from the backend data (already full URLs from Supabase)
   // Only use imageUrl if it's a valid full URL (not a relative path like "default.png")
   let imageUrl = weapon.imageUrl || weapon.image;
-  console.log(`Weapon ${weapon.name} imageUrl:`, imageUrl);
   if (imageUrl && !imageUrl.startsWith("http")) {
     imageUrl = null; // Ignore invalid/relative paths
   }
@@ -464,6 +443,68 @@ function formatPerks(perks) {
         perkName = perk.name;
       }
       return `<span class="perk">${escapeHtml(perkName)}</span>`;
+    })
+    .join("");
+}
+
+// Render equipment item with optional image
+function renderEquipmentItem(label, equipment) {
+  const name = getEquipmentName(equipment);
+  let imageUrl = null;
+
+  if (equipment && typeof equipment === "object" && equipment.imageUrl) {
+    imageUrl = equipment.imageUrl;
+    if (imageUrl && !imageUrl.startsWith("http")) {
+      imageUrl = null;
+    }
+  }
+
+  return `
+    <div class="equipment-item">
+      <div class="equipment-label">${escapeHtml(label)}</div>
+      ${
+        imageUrl
+          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(
+              name
+            )}" class="equipment-image" onerror="this.style.display='none'">`
+          : ""
+      }
+      <div class="equipment-name">${escapeHtml(name)}</div>
+    </div>
+  `;
+}
+
+// Render perks with optional images
+function renderPerksWithImages(perks) {
+  if (!perks || !Array.isArray(perks)) return "";
+
+  return perks
+    .map((perk) => {
+      let perkName = "Unknown Perk";
+      let imageUrl = null;
+
+      if (typeof perk === "string") {
+        perkName = perk;
+      } else if (typeof perk === "object" && perk) {
+        perkName = perk.name || "Unknown Perk";
+        imageUrl = perk.imageUrl;
+        if (imageUrl && !imageUrl.startsWith("http")) {
+          imageUrl = null;
+        }
+      }
+
+      return `
+        <div class="perk-item">
+          ${
+            imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(
+                  perkName
+                )}" class="perk-image" onerror="this.style.display='none'">`
+              : ""
+          }
+          <span class="perk">${escapeHtml(perkName)}</span>
+        </div>
+      `;
     })
     .join("");
 }
