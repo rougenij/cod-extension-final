@@ -16,7 +16,7 @@ body {
 
 body {
   font-family: "Orbitron", "Courier New", monospace;
-  background: linear-gradient(135deg, #050710 0%, #0a0f1c 100%);
+  background: transparent;
   color: #ffffff;
   overflow-x: hidden;
 }
@@ -28,6 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: linear-gradient(135deg, #050710 0%, #0a0f1c 100%);
 }
 
 .header {

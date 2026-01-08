@@ -297,30 +297,7 @@ nextBtn.addEventListener("click", navigateNext);
 toggleBtn.addEventListener("click", toggleExpanded);
 retryBtn.addEventListener("click", loadLoadouts);
 
-// Keyboard navigation
-document.addEventListener("keydown", (event) => {
-  if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
-    return; // Don't interfere with form inputs
-  }
-
-  switch (event.key) {
-    case "ArrowLeft":
-      event.preventDefault();
-      navigatePrevious();
-      break;
-    case "ArrowRight":
-      event.preventDefault();
-      navigateNext();
-      break;
-    case " ":
-    case "Enter":
-      event.preventDefault();
-      toggleExpanded();
-      break;
-  }
-});
-
-// Initialize when DOM is loaded
+// Initialize when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   initializeTwitchExtension();
 });
