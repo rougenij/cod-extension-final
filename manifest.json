@@ -43,7 +43,14 @@
     "24x24": "https://cod-extension.netlify.app/icon-24.png",
     "100x100": "https://cod-extension.netlify.app/icon-100.png"
   },
-  "screenshots": [],
+  "screenshots": [
+    {
+      "url": "https://cod-extension.netlify.app/screenshot-panel.png"
+    },
+    {
+      "url": "https://cod-extension.netlify.app/screenshot-panel2.png"
+    }
+  ],
   "allowlisted_config_urls": ["https://cod-extension.netlify.app/"],
   "allowlisted_panel_urls": ["https://cod-extension.netlify.app/"]
 }
