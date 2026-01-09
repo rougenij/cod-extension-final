@@ -16,17 +16,17 @@ body {
 
 body {
   font-family: "Orbitron", "Courier New", monospace;
-  background: transparent;
+  background: linear-gradient(135deg, #050710 0%, #0a0f1c 100%);
   color: #ffffff;
-  min-height: 100%;
+  min-height: 100vh;
   line-height: 1.6;
+  overflow-y: auto;
 }
 
 .config-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 24px;
-  background: linear-gradient(135deg, #050710 0%, #0a0f1c 100%);
   min-height: 100vh;
 }
 
